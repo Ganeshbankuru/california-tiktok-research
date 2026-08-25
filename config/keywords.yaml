@@ -1,0 +1,164 @@
+core_terms:
+  - trucking
+  - truck driver
+  - truckers
+  - owner operator
+  - fleet owner
+  - trucking company
+  - freight
+  - logistics
+  - dispatch
+  - dispatching
+  - CDL
+  - transportation
+  - truck stop
+  - diesel
+  - semi truck
+  - big rig
+  - 18 wheeler
+  - OTR
+  - reefer
+  - dry van
+  - flatbed
+  - tanker
+  - fleet management
+
+topics:
+  CDL:
+    - cdl
+    - cdl training
+    - cld school
+    - driving school
+    - commercial driver
+  owner_operator:
+    - owner operator
+    - owner-operator
+    - o/o
+    - own authority
+  fleet:
+    - fleet
+    - fleet owner
+    - fleet management
+  freight:
+    - freight
+    - load board
+    - loadboard
+    - broker
+    - shipping
+  dispatch:
+    - dispatcher
+    - dispatch
+  diesel:
+    - diesel
+    - dpf
+    - def fluid
+  otr:
+    - otr
+    - over the road
+    - long haul
+  reefer:
+    - reefer
+    - refrigerated
+    - cold chain
+  dry_van:
+    - dry van
+  flatbed:
+    - flatbed
+    - tarps
+  tanker:
+    - tanker
+    - hazmat
+  truck_reviews:
+    - truck review
+    - new truck
+    - peterbilt
+    - kenworth
+    - freightliner
+    - volvo trucks
+    - mack trucks
+    - international truck
+    - western star
+  truck_life:
+    - truck life
+    - trucker life
+    - life on the road
+    - trucking life
+    - day in the life
+  truck_driving:
+    - truck driver
+    - truck driving
+    - driver shortage
+    - eld
+    - log book
+
+strong_topic_terms:
+  - trucking
+  - truck driver
+  - cdl
+  - owner operator
+  - big rig
+  - semi truck
+  - 18 wheeler
+  - freight
+  - otr
+
+california_terms_strong:
+  - California
+  - Los Angeles
+  - San Jose
+  - San Francisco
+  - Oakland
+  - Sacramento
+  - Fresno
+  - Stockton
+  - Riverside
+  - San Bernardino
+  - Long Beach
+  - Bakersfield
+  - Modesto
+  - Ontario CA
+  - Inland Empire
+  - Bay Area
+  - Central Valley
+
+california_terms_weak:
+  CA: {pattern: "\\bCA\\b", case_sensitive: true}
+  SoCal: {pattern: "SoCal|So Cal", case_sensitive: false}
+  NorCal: {pattern: "NorCal|Nor Cal", case_sensitive: false}
+
+california_hashtags:
+  - california
+  - californiatrucking
+  - bayarea
+  - socal
+  - norcal
+  - centralvalley
+  - losangeles
+  - sanjose
+  - sacramento
+  - fresno
+
+hashtag_seeds:
+  - trucking
+  - truckdriver
+  - cdl
+  - bigrig
+  - semitruck
+  - owneroperator
+  - truckertok
+  - trucktok
+  - freight
+  - logistics
+  - diesel
+  - flatbed
+  - reefer
+  - otr
+
+search_query_templates:
+  - 'site:tiktok.com @{alias}'
+  - '"{name}" tiktok'
+  - '{term} tiktok creator california'
+  - 'site:tiktok.com {term} california'
+  - 'site:tiktok.com/tag/{tag}'
+  - '{seed_name} tiktok profile'
+  - '{seed_name} youtube channel'

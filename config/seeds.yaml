@@ -1,0 +1,76 @@
+seed_accounts:
+  - name: "Alex Nino"
+    aliases:
+      - "Alex Nino trucking"
+      - "alexnino"
+    platforms: [youtube, tiktok, instagram]
+    approx_youtube_subscribers: 2090000
+    tiktok_handle: null
+    urls:
+      youtube: null
+      tiktok: null
+      instagram: null
+    notes: "Handle must be resolved via search at runtime (VERIFY)."
+
+  - name: "Mutha Trucker News"
+    aliases:
+      - "Mutha Trucker"
+      - "muthatruckernews"
+    platforms: [youtube, tiktok, instagram, facebook, linkedin]
+    approx_youtube_subscribers: 628000
+    tiktok_handle: null
+    urls:
+      youtube: null
+      tiktok: null
+      instagram: null
+      facebook: null
+      linkedin: null
+    notes: "Handle must be resolved via search at runtime (VERIFY)."
+
+  - name: "San Jose Truck Driving School"
+    aliases:
+      - "Truck Master School"
+      - "San Jose truck driving school"
+      - "truckmasterschool"
+    platforms: [youtube, tiktok]
+    approx_youtube_subscribers: null
+    tiktok_handle: null
+    urls:
+      youtube: null
+      tiktok: null
+    notes: "Subscribers VERIFY. Handle must be resolved via search."
+
+  - name: "Jasmin De Loa"
+    aliases:
+      - "Asmin De Loa"
+      - "Jasmin De Loa trucking"
+      - "deloa jasmin"
+    platforms: [tiktok, instagram]
+    approx_tiktok_followers: 950000
+    tiktok_handle: null
+    urls:
+      tiktok: null
+      instagram: null
+    notes: "Approx 950K TikTok followers. Handle must be resolved via search."
+
+  - name: "Alex The Trucking Guy"
+    aliases:
+      - "alexthetruckingguy"
+      - "Alex the Trucking Guy"
+    platforms: [youtube]
+    approx_youtube_subscribers: 1100000
+    tiktok_handle: null
+    urls:
+      youtube: null
+    notes: "YouTube-only seed per brief."
+
+  - name: "Big Rig Videos"
+    aliases:
+      - "bigrigvideos"
+      - "Big Rig Videos"
+    platforms: [youtube]
+    approx_youtube_subscribers: 439000
+    tiktok_handle: null
+    urls:
+      youtube: null
+    notes: "YouTube-only seed per brief."

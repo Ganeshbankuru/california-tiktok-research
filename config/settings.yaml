@@ -1,0 +1,73 @@
+app:
+  name: "California Trucking TikTok Creator Researcher"
+  db_path: "database/research.sqlite3"
+  output_dir: "output"
+  logs_dir: "logs"
+
+follower_filter:
+  min_followers: 2000
+  max_followers: 10000
+
+activity:
+  active_days: 60
+  recent_days: 90
+
+relevance:
+  trucking_high_min_strong_terms: 2
+  trucking_medium_min_terms: 1
+  california_high_strong_hits: 1
+  california_max_bio_chars: 600
+
+scoring_weights:
+  california_relevance: 25
+  trucking_relevance: 25
+  activity: 20
+  audience_fit: 10
+  engagement: 10
+  marketing_potential: 10
+
+level_scores:
+  california:
+    HIGH: 25
+    MEDIUM: 15
+    LOW: 7
+    UNKNOWN: 0
+  trucking:
+    HIGH: 25
+    MEDIUM: 15
+    LOW: 8
+    EXCLUDE: 0
+  activity:
+    ACTIVE: 20
+    RECENT: 12
+    INACTIVE: 0
+    UNKNOWN: 0
+  engagement:
+    UNKNOWN: 0
+    LOW: 4
+    MEDIUM: 7
+    HIGH: 10
+  engagement_thresholds:
+    low_min_ratio: 0.01
+    medium_min_ratio: 0.03
+    high_min_ratio: 0.08
+
+network:
+  request_delay_seconds: 2.5
+  timeout_seconds: 25
+  max_retries: 1
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+  blocked_source_max_failures: 2
+  search_engine: "https://lite.duckduckgo.com/lite/"
+  search_engines: ["bing_browser", "duckduckgo_http", "duckduckgo_browser"]
+
+limits:
+  default_test_limit: 10
+  discovery_multiplier: 3
+  max_candidates_hard_cap: 1000
+
+export:
+  csv_file: "california_trucking_creators.csv"
+  xlsx_file: "california_trucking_creators.xlsx"
+  json_file: "california_trucking_creators.json"
+  summary_file: "research_summary.md"
