@@ -17,12 +17,13 @@ YT_CHANNEL_RE = re.compile(r"https?://(?:www\.)?youtube\.com/(@[A-Za-z0-9._\-]+|
 
 
 class DiscoveryEngine:
-    def __init__(self, settings, keywords, seeds, search_source, logger=None, youtube=None):
+    def __init__(self, settings, keywords, seeds, search_source, logger=None, youtube=None, tiktok=None):
         self.settings = settings
         self.keywords = keywords
         self.seeds = seeds
         self.search = search_source
         self.yt = youtube
+        self.tiktok = tiktok
         self.log = logger
 
     def _queries_for_seed(self, seed):
@@ -60,6 +61,42 @@ class DiscoveryEngine:
                 "query_used": query_used,
             })
         return records
+
+    def tag_list(self, max_tags=14):
+        tags = list(self.keywords.get("hashtag_seeds") or [])
+        ca_tags = [t for t in (self.keywords.get("california_hashtags") or []) if t not in ("california",)]
+        combos = [f"{t}california" for t in tags[:4]] + ca_tags[:3]
+        return (tags + combos)[:max_tags]
+
+    def discover_by_tiktok_tags(self, stop_when=None):
+        """Directly browse public TikTok tag pages — richest source of small creators."""
+        found = []
+        if self.tiktok is None:
+            return found
+        for tag in self.tag_list():
+            if stop_when and stop_when(len({r["username"] for r in found if r.get("username")})):
+                break
+            if self.tiktok.disabled():
+                break
+            try:
+                users = self.tiktok.fetch_tag_users(tag)
+            except (BlockedSourceError, SourceError) as e:
+                found.append({"_error": e})
+                break
+            except (RateLimitedError, RuntimeError) as e:
+                found.append({"_error": e})
+                continue
+            if self.log:
+                self.log.info(f"tag #{tag}: {len(users)} creators visible")
+            for u in users:
+                found.append({
+                    "username": u,
+                    "seed_account": None,
+                    "discovery_method": METHOD_HASHTAG,
+                    "source_url": f"https://www.tiktok.com/tag/{tag}",
+                    "query_used": f"#{tag}",
+                })
+        return found
 
     def discover_seed_related_via_youtube(self, stop_when=None):
         """Resolve each seed's own TikTok handle via their public YouTube channel."""

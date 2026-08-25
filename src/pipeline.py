@@ -26,7 +26,8 @@ class ResearchPipeline:
         self.tiktok = TikTokWebSource(settings, logger=logger)
         self.youtube = YouTubeBrowserSearch(settings, logger=logger)
         self.discovery = DiscoveryEngine(
-            settings, keywords, seeds, self.search, logger=logger, youtube=self.youtube
+            settings, keywords, seeds, self.search, logger=logger,
+            youtube=self.youtube, tiktok=self.tiktok,
         )
         ca_strong = keywords.get("california_terms_strong", [])
         ca_weak = {k: v for k, v in (keywords.get("california_terms_weak") or {}).items()}
@@ -117,6 +118,10 @@ class ResearchPipeline:
                     self.log.info(f"discovery: web-search seed pass ({current}/{need})")
                 records.extend(subset_engine.discover_seed_related(stop_when=stop))
         elif seed_filter is None:
+            if self.log:
+                self.log.info("discovery: tiktok tag pass (small-creator hunting)")
+            records.extend(self.discovery.discover_by_tiktok_tags(stop_when=stop))
+            current = len({r.get("username") for r in records if r.get("username")})
             if self.log:
                 self.log.info("discovery: youtube seed-related pass")
             records.extend(self.discovery.discover_seed_related_via_youtube(stop_when=stop))

@@ -67,6 +67,39 @@ class TestYouTubeChannelExtraction:
         assert "@TruckerA" in out[0]["url"]
 
 
+class TestTagPageParsing:
+    def test_parses_unique_ids(self):
+        from src.sources.tiktok import parse_tag_users_from_html
+        html = '{"uniqueId":"small_trucker_ca","nickname":"Fresno Hauler"} {"uniqueId":"cdl.journey"}'
+        users = parse_tag_users_from_html(html)
+        assert "small_trucker_ca" in users
+        assert "cdl.journey" in users
+
+    def test_parses_href_links(self):
+        from src.sources.tiktok import parse_tag_users_from_html
+        html = '<a href="/@flatbedfreddy?lang=en">x</a>'
+        assert "flatbedfreddy" in parse_tag_users_from_html(html)
+
+    def test_dedupes_and_cleans(self):
+        from src.sources.tiktok import parse_tag_users_from_html
+        html = '"uniqueId":"BobTrucks" "uniqueId":"bobtrucks" <a href="/@bobtrucks">'
+        users = parse_tag_users_from_html(html)
+        assert users.count("bobtrucks") == 1
+
+    def test_empty_html(self):
+        from src.sources.tiktok import parse_tag_users_from_html
+        assert parse_tag_users_from_html("") == []
+        assert parse_tag_users_from_html(None) == []
+
+    def test_engine_has_tag_list(self):
+        from src.discovery.discovery import DiscoveryEngine
+        from src.utils.config import load_keywords, load_settings
+        eng = DiscoveryEngine(load_settings(), load_keywords(), [], None)
+        tags = eng.tag_list()
+        assert len(tags) > 5
+        assert any("truck" in t or "cdl" in t for t in tags)
+
+
 class TestUnreachableMarking:
     def test_unreachable_error_kind(self):
         from src.browser.exceptions import UnreachableSourceError

@@ -1,9 +1,38 @@
 import json
+import re
+import urllib.parse
 
 from ..browser.agent_browser import AgentBrowser, with_retries
 from ..browser.exceptions import BlockedSourceError, SourceError
 from ..filters.filters import classify_activity
 from ..utils.helpers import parse_date, safe_int
+
+
+UNIQUE_ID_RE = re.compile(r'"uniqueId"\s*:\s*"([A-Za-z0-9._\-]{2,30})"')
+HREF_USER_RE = re.compile(r'href="[^"]*?/(@[A-Za-z0-9._\-]{2,30})')
+
+
+def parse_tag_users_from_html(html_text):
+    """Extract candidate usernames from a public tag page (rendered HTML)."""
+    users = []
+    seen = set()
+    for m in UNIQUE_ID_RE.finditer(html_text or ""):
+        u = m.group(1).strip(".").lower()
+        if u and u not in seen:
+            seen.add(u)
+            users.append(u)
+    for m in HREF_USER_RE.finditer(html_text or ""):
+        u = m.group(1).lstrip("@").strip(".").lower()
+        if u and u not in seen:
+            seen.add(u)
+            users.append(u)
+    from ..browser.http_fetcher import extract_tiktok_usernames
+    for u in extract_tiktok_usernames(html_text or ""):
+        low = u.lower()
+        if low and low not in seen:
+            seen.add(low)
+            users.append(low)
+    return users[:80]
 
 
 EXTRACT_JS = """
@@ -175,6 +204,26 @@ class TikTokWebSource:
                 raise BlockedSourceError(self.name, url, f"profile gated by protection ({block})")
             return None, "no_public_data"
         return parsed, "ok"
+
+    def fetch_tag_users(self, tag):
+        """Open a public tag page (e.g. /tag/trucking) and list creators on it."""
+        if self.disabled():
+            raise SourceError(self.name, "", "source disabled after repeated blocks")
+        if not self.available():
+            raise SourceError(self.name, "", "agent-browser unavailable")
+        url = f"https://www.tiktok.com/tag/{urllib.parse.quote(tag)}"
+        try:
+            with_retries(lambda: self.browser.visit(url), max_retries=1, backoff_s=5, logger=self.log)
+        except BlockedSourceError as e:
+            self.note_block()
+            raise
+        except RuntimeError as e:
+            self.note_block()
+            from ..browser.exceptions import UnreachableSourceError
+            raise UnreachableSourceError(self.name, url, f"cannot reach tiktok.com: {str(e)[:160]}")
+        html = str(self.browser.eval("document.documentElement.outerHTML") or "")
+        users = parse_tag_users_from_html(html)
+        return users
 
     def activity_for(self, profile_data):
         if profile_data.last_post_dt is None:
