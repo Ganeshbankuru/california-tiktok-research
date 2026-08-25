@@ -154,6 +154,26 @@ class TestDatabaseAndResume:
         db.close()
 
 
+class TestExportFilters:
+    def test_california_only_filter(self, settings):
+        from src.exporters.exporters import apply_export_filters
+        rows = [
+            {"rank": 1, "username": "@high", "california_relevance": "HIGH", "marketing_score": 90},
+            {"rank": 2, "username": "@mid", "california_relevance": "MEDIUM", "marketing_score": 80},
+            {"rank": 3, "username": "@low", "california_relevance": "LOW", "marketing_score": 70},
+            {"rank": 4, "username": "@unk", "california_relevance": "UNKNOWN", "marketing_score": 60},
+        ]
+        kept = apply_export_filters([dict(r) for r in rows], settings)
+        assert [r["username"] for r in kept] == ["@high", "@mid"]
+        assert [r["rank"] for r in kept] == [1, 2]
+
+    def test_filter_disabled(self):
+        from src.exporters.exporters import apply_export_filters
+        cfg = {"export": {"california_only": False}}
+        rows = [{"rank": 1, "username": "@low", "california_relevance": "LOW"}]
+        assert len(apply_export_filters(rows, cfg)) == 1
+
+
 class TestExports:
     def _seeded_db(self, tmp_path):
         from src.database.db import Database

@@ -26,6 +26,20 @@ def _parse_json_field(value):
         return [str(value)]
 
 
+def _california_rank(level):
+    return {"HIGH": 3, "MEDIUM": 2, "LOW": 1, "UNKNOWN": 0}.get(level or "UNKNOWN", 0)
+
+
+def apply_export_filters(rows, settings):
+    exp = settings.get("export", {})
+    if exp.get("california_only"):
+        min_rank = _california_rank(exp.get("min_california_level", "MEDIUM"))
+        rows = [r for r in rows if _california_rank(r.get("california_relevance")) >= min_rank]
+    for i, r in enumerate(rows, start=1):
+        r["rank"] = i
+    return rows
+
+
 def build_rows(db):
     rows = []
     for i, r in enumerate(db.qualified_rows(), start=1):
@@ -144,6 +158,14 @@ def build_summary(db, settings):
     lines.append(f"- Candidates discovered: {total_candidates}")
     lines.append(f"- Verified (data extracted): {verified}")
     lines.append(f"- Qualified (2k-10k followers): {qualified}")
+    exp = settings.get("export", {}) if isinstance(settings, dict) else {}
+    if exp.get("california_only"):
+        all_rows = build_rows(db)
+        kept = apply_export_filters(all_rows, settings)
+        lines.append(
+            f"- Export filter ACTIVE (California {exp.get('min_california_level', 'MEDIUM')}+): "
+            f"{len(kept)} of {len(all_rows)} qualified rows included in exports"
+        )
     lines.append(f"- Rejected: TOO_SMALL={too_small}, TOO_LARGE={too_large}, UNKNOWN={unknown_f}")
     lines.append(f"- Active creators: {active}")
     lines.append(f"- California HIGH relevance: {ca_high}")
@@ -212,7 +234,7 @@ def write_summary(db, settings):
 
 
 def export_all(db, settings):
-    rows = build_rows(db)
+    rows = apply_export_filters(build_rows(db), settings)
     paths = {
         "csv": export_csv(rows, settings),
         "xlsx": export_xlsx(rows, settings),

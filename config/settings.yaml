@@ -71,3 +71,5 @@ export:
   xlsx_file: "california_trucking_creators.xlsx"
   json_file: "california_trucking_creators.json"
   summary_file: "research_summary.md"
+  california_only: true
+  min_california_level: "MEDIUM"

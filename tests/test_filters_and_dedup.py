@@ -135,6 +135,15 @@ class TestCaliforniaClassification:
         level, evidence, hits = ca_classifier.classify([None, ""])
         assert level == "UNKNOWN"
 
+    def test_area_code_is_evidence(self, ca_classifier):
+        level, evidence, _ = ca_classifier.classify(["Hauling loads all week. 510 born n raised"])
+        assert level == "HIGH"
+        assert "510" in evidence
+
+    def test_bayarea_weak_term(self, ca_classifier):
+        level, _, _ = ca_classifier.classify(["Trucking content from the Bay, haulin every day on the road"])
+        assert level in ("HIGH", "MEDIUM")
+
     def test_short_text_stays_unknown(self, ca_classifier):
         level, _, _ = ca_classifier.classify(["hi"])
         assert level == "UNKNOWN"

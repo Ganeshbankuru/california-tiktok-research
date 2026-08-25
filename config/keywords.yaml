@@ -120,16 +120,56 @@ california_terms_strong:
   - Inland Empire
   - Bay Area
   - Central Valley
+  - Hayward
+  - Fremont
+  - San Leandro
+  - Castro Valley
+  - Union City
+  - Concord
+  - Walnut Creek
+  - Vallejo
+  - Fairfield CA
+  - Vacaville
+  - Tracy
+  - Manteca
+  - Lathrop
+  - French Camp
+  - Dublin CA
+  - Livermore
+  - Pleasanton
+  - San Ramon
+  - Danville CA
+  - Alameda
+  - Berkeley
+  - Richmond CA
+  - San Pablo
+  - Daly City
+  - San Mateo
+  - Redwood City
+  - Palo Alto
+  - Sunnyvale
+  - Santa Clara
+  - Milpitas
+  - Gilroy
+  - Morgan Hill
+  - Merced
+  - Turlock
+  - Ceres
+  - Salinas
+  - Watsonville
 
 california_terms_weak:
   CA: {pattern: "\\bCA\\b", case_sensitive: true}
   SoCal: {pattern: "SoCal|So Cal", case_sensitive: false}
   NorCal: {pattern: "NorCal|Nor Cal", case_sensitive: false}
+  BayArea: {pattern: "Bay Area|BayArea|the Bay\\b", case_sensitive: false}
+  AreaCode: {pattern: "\\b(510|408|925|415|650|707|916|209|669|279)\\b", case_sensitive: false}
 
 california_hashtags:
   - california
   - californiatrucking
   - bayarea
+  - bayareatrucking
   - socal
   - norcal
   - centralvalley
@@ -137,6 +177,7 @@ california_hashtags:
   - sanjose
   - sacramento
   - fresno
+  - oaklandtrucking
 
 hashtag_seeds:
   - trucking
