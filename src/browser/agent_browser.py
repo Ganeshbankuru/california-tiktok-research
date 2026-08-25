@@ -138,6 +138,14 @@ class AgentBrowser:
         except (json.JSONDecodeError, ValueError):
             return out
 
+    def scroll_bottom(self, pause_ms=1500):
+        """Scroll to page bottom and let lazy content load."""
+        try:
+            self.eval("window.scrollTo(0, document.body.scrollHeight)")
+            self._run(["wait", str(pause_ms)], timeout=pause_ms / 1000 + 10)
+        except (RuntimeError, subprocess.TimeoutExpired):
+            pass
+
     def screenshot(self, path):
         proc = self._run(["screenshot", path], timeout=self.timeout + 15)
         return proc.returncode == 0

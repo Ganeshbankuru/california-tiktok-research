@@ -206,7 +206,11 @@ class TikTokWebSource:
         return parsed, "ok"
 
     def fetch_tag_users(self, tag):
-        """Open a public tag page (e.g. /tag/trucking) and list creators on it."""
+        """Open a public tag page (e.g. /tag/trucking) and list creators on it.
+
+        TikTok renders the creator/video grid client-side, so we scroll and
+        settle before extracting; one extra settle round if still empty.
+        """
         if self.disabled():
             raise SourceError(self.name, "", "source disabled after repeated blocks")
         if not self.available():
@@ -221,8 +225,24 @@ class TikTokWebSource:
             self.note_block()
             from ..browser.exceptions import UnreachableSourceError
             raise UnreachableSourceError(self.name, url, f"cannot reach tiktok.com: {str(e)[:160]}")
-        html = str(self.browser.eval("document.documentElement.outerHTML") or "")
-        users = parse_tag_users_from_html(html)
+
+        users = []
+        html_len = 0
+        for round_no in range(2):
+            self.browser.scroll_bottom(pause_ms=1500)
+            html = str(self.browser.eval("document.documentElement.outerHTML") or "")
+            html_len = len(html)
+            users = parse_tag_users_from_html(html)
+            if users:
+                break
+            self.browser.scroll_bottom(pause_ms=2500)
+        if not users and self.log:
+            block = None
+            try:
+                block = self.browser.detect_block()
+            except Exception:
+                pass
+            self.log.info(f"tag #{tag}: empty after retries (html_len={html_len}, block={block})")
         return users
 
     def activity_for(self, profile_data):
