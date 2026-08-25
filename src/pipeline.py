@@ -31,7 +31,8 @@ class ResearchPipeline:
         )
         ca_strong = keywords.get("california_terms_strong", [])
         ca_weak = {k: v for k, v in (keywords.get("california_terms_weak") or {}).items()}
-        self.ca_classifier = CaliforniaClassifier(ca_strong, ca_weak)
+        ca_operational = keywords.get("california_operational_patterns") or {}
+        self.ca_classifier = CaliforniaClassifier(ca_strong, ca_weak, operational_patterns=ca_operational)
         rel = settings.get("relevance", {})
         self.trucking_classifier = TruckingClassifier(
             topics=keywords.get("topics", {}),

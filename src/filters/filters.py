@@ -45,11 +45,17 @@ def _compile_terms(terms):
 
 
 class CaliforniaClassifier:
-    def __init__(self, strong_terms, weak_terms):
+    def __init__(self, strong_terms, weak_terms, operational_patterns=None):
         self.strong = _compile_terms(strong_terms)
         self.weak = [
             (label, re.compile(spec["pattern"], 0 if spec.get("case_sensitive") else re.IGNORECASE))
             for label, spec in weak_terms.items()
+        ]
+        # Business-operates-in-California signals (CARB applicability),
+        # e.g. "CARB compliant", "running CA loads", "port of Oakland drayage".
+        self.operational = [
+            (label, re.compile(pattern, re.IGNORECASE))
+            for label, pattern in (operational_patterns or {}).items()
         ]
 
     def classify(self, texts, max_bio_chars=600):
@@ -62,6 +68,10 @@ class CaliforniaClassifier:
                 continue
             total_chars += len(text)
             snippet = text[:2000]
+            for label, rx in self.operational:
+                if rx.search(snippet):
+                    strong_hits.add(label)
+                    evidence.append(label)
             for term, rx in self.strong:
                 if rx.search(snippet):
                     strong_hits.add(term)
@@ -107,12 +117,8 @@ class TruckingClassifier:
         matched_core = sorted({t for t, rx in self.core if rx.search(blob)}, key=len, reverse=True)
         strong_matched = sorted({t for t, rx in self.strong if rx.search(blob)})
         topics_found = []
-        for topic in ["CDL", "owner_operator", "fleet", "freight", "dispatch",
-                      "diesel", "otr", "reefer", "dry_van", "flatbed", "tanker",
-                      "truck_reviews", "truck_life", "truck_driving"]:
-            terms = self.topics.get(topic, [])
-            hits = [t for t, rx in terms if rx.search(blob)]
-            if hits:
+        for topic, terms in self.topics.items():
+            if any(rx.search(blob) for _, rx in terms):
                 topics_found.append(topic)
         n_topics = len(topics_found)
         n_strong = len(strong_matched)

@@ -30,6 +30,7 @@ def ca_classifier(keywords):
     return CaliforniaClassifier(
         keywords["california_terms_strong"],
         keywords.get("california_terms_weak") or {},
+        operational_patterns=keywords.get("california_operational_patterns") or {},
     )
 
 
@@ -147,6 +148,34 @@ class TestCaliforniaClassification:
     def test_short_text_stays_unknown(self, ca_classifier):
         level, _, _ = ca_classifier.classify(["hi"])
         assert level == "UNKNOWN"
+
+
+class TestCarbOperatesInCalifornia:
+    def test_carb_bio_is_high(self, ca_classifier, tr_classifier):
+        bio = "CARB compliant hauler. Truck life daily, OTR vlogs and diesel talk."
+        ca_level, evidence, _ = ca_classifier.classify([bio])
+        tr_level, topics, _ = tr_classifier.classify([bio])
+        assert ca_level == "HIGH"
+        assert "carb" in evidence.lower()
+        assert "emissions_compliance" in topics
+
+    def test_out_of_state_carrier_running_ca_loads(self, ca_classifier):
+        bio = "Texas based owner operator running CA loads weekly. Flatbed and reefer."
+        level, evidence, _ = ca_classifier.classify([bio])
+        assert level == "HIGH"
+
+    def test_drayage_port_signal(self, ca_classifier, tr_classifier):
+        bio = "Drayage driver out of the port of Oakland. Day in the life vlogs."
+        ca_level, _, _ = ca_classifier.classify([bio])
+        _, topics, _ = tr_classifier.classify([bio])
+        assert ca_level == "HIGH"
+        assert "ports_drayage" in topics
+
+    def test_west_coast_counts(self, ca_classifier):
+        level, _, _ = ca_classifier.classify([
+            "West coast trucker vlogging my runs every week on the road hauling freight"
+        ])
+        assert level == "HIGH"
 
 
 class TestTruckingClassification:

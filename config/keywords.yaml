@@ -84,12 +84,31 @@ topics:
     - life on the road
     - trucking life
     - day in the life
+    - truck vlog
   truck_driving:
     - truck driver
     - truck driving
     - driver shortage
     - eld
     - log book
+  emissions_compliance:
+    - carb
+    - clean truck check
+    - smog check
+    - dpf
+    - diesel emissions
+    - emissions test
+    - hd im
+    - heavy duty inspection
+    - def delete
+    - dpf delete
+  ports_drayage:
+    - drayage
+    - port of oakland
+    - port of los angeles
+    - long beach port
+    - intermodal
+    - container haul
 
 strong_topic_terms:
   - trucking
@@ -101,6 +120,20 @@ strong_topic_terms:
   - 18 wheeler
   - freight
   - otr
+  - carb
+  - clean truck check
+  - dpf
+  - drayage
+
+# Signals that a creator's BUSINESS OPERATES IN/FOR CALIFORNIA
+# (=> needs CARB Clean Truck Check), even if based in another state.
+california_operational_patterns:
+  carb: "\\bCARB\\b|CARB compliant|CARB verified|clean truck check"
+  ca_runs: "\\bCA\\b loads|running to CA|ran to CA|CA bound|to CA\\b|out of CA|inbound CA"
+  cali: "\\bCali\\b|California"
+  ports: "port of Oakland|port of LA|port of Long Beach|Port of Stockton|\\bdrayage\\b"
+  west_coast: "west coast|left coast"
+  inspection: "smog check|DPF (clean|replace|delete)|biennial|HD I/M|heavy duty inspection"
 
 california_terms_strong:
   - California
